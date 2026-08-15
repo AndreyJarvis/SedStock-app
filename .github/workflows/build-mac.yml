@@ -8,8 +8,16 @@ on:
       - ".github/workflows/build-mac.yml"
 
 jobs:
-  build-macos:
-    runs-on: macos-latest
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: macos-13
+            label: Intel
+          - runner: macos-14
+            label: AppleSilicon
+    runs-on: ${{ matrix.runner }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -47,10 +55,10 @@ jobs:
       - name: Zip the .app
         run: |
           cd dist
-          zip -r -y SedStock-macOS.zip SedStock.app
+          zip -r -y "SedStock-macOS-${{ matrix.label }}.zip" SedStock.app
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: SedStock-macOS
-          path: dist/SedStock-macOS.zip
+          name: SedStock-macOS-${{ matrix.label }}
+          path: dist/SedStock-macOS-${{ matrix.label }}.zip
