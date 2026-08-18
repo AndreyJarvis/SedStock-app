@@ -58,7 +58,7 @@ done < <(find "$APP/Contents" -type f)
     "$APP"
 
 echo "==> Отправляю на нотаризацию Apple и прикрепляю штамп (1–15 минут)"
-"$RC" notary-submit --max-wait-seconds 2400 --api-key-path "$TMP/api-key.json" --staple "$APP"
+"$RC" notary-submit --max-wait-seconds 15000 --api-key-path "$TMP/api-key.json" --staple "$APP"
 
 echo "==> Проверка подписи"
 "$RC" verify "$APP" || true
