@@ -19,11 +19,20 @@ echo "==> Готовлю сертификат и ключ нотаризации
 echo "$MAC_CERT_P12_BASE64" | base64 --decode > "$TMP/cert.p12"
 echo "$AC_API_KEY_P8_BASE64" | base64 --decode > "$TMP/api-key.json"
 
+echo "==> Подписываю $APP (hardened runtime: главный + вложенные executables)"
+APPNAME="$(basename "$APP" .app)"
+SIGN_FLAGS=(--code-signature-flags runtime)
+while IFS= read -r f; do
+    rel="${f#$APP/}"
+    [ "$rel" = "Contents/MacOS/$APPNAME" ] && continue
+    if file "$f" | grep -q "Mach-O.*executable"; then
+        SIGN_FLAGS+=(--code-signature-flags "${rel}:runtime")
+        echo "    + runtime -> $rel"
+    fi
+done < <(find "$APP/Contents" -type f)
 
-echo "==> Подписываю $APP (hardened runtime + разрешения)"
-"$RC" sign \
+"$RC" sign "${SIGN_FLAGS[@]}" \
     --p12-file "$TMP/cert.p12" --p12-password "" \
-        --code-signature-flags main:runtime \
     --entitlements-xml-path "$ENTITLEMENTS" \
     "$APP"
 
