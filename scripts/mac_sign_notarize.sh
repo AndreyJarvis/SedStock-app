@@ -17,9 +17,8 @@ chmod +x "$RC"
 
 echo "==> Готовлю сертификат и ключ нотаризации"
 echo "$MAC_CERT_P12_BASE64" | base64 --decode > "$TMP/cert.p12"
-echo "$AC_API_KEY_P8_BASE64" | base64 --decode > "$TMP/authkey.p8"
-"$RC" encode-app-store-connect-api-key -o "$TMP/api-key.json" \
-    "$AC_API_ISSUER_ID" "$AC_API_KEY_ID" "$TMP/authkey.p8"
+echo "$AC_API_KEY_P8_BASE64" | base64 --decode > "$TMP/api-key.json"
+
 
 echo "==> Подписываю $APP (hardened runtime + разрешения)"
 "$RC" sign \
