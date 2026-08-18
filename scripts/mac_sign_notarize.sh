@@ -23,7 +23,7 @@ echo "$AC_API_KEY_P8_BASE64" | base64 --decode > "$TMP/authkey.p8"
 
 echo "==> Подписываю $APP (hardened runtime + разрешения)"
 "$RC" sign \
-    --p12-file "$TMP/cert.p12" --p12-password "$MAC_CERT_PASSWORD" \
+    --p12-file "$TMP/cert.p12" --p12-password "" \
     --code-signature-flags runtime \
     --entitlements-xml-path "$ENTITLEMENTS" \
     "$APP"
